@@ -1,1 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Wrestling Scoreboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="meta">
+      <div class="metaBlock">
+        <div class="label">MAT #</div>
+        <div class="value" id="matNum">1</div>
+        <div class="row">
+          <button class="btn small" data-action="matDec">-</button>
+          <button class="btn small" data-action="matInc">+</button>
+        </div>
+      </div>
+
+      <div class="timerBlock">
+        <div class="timer" id="timerDisplay">00:00</div>
+        <div class="row wrap">
+          <button class="btn" data-action="setTime">Set Time</button>
+          <button class="btn" data-action="startTimer">Start Timer</button>
+          <button class="btn" data-action="stopTimer">Stop Timer</button>
+          <button class="btn danger" data-action="resetTimer">RESET TIMER</button>
+        </div>
+      </div>
+
+      <div class="metaBlock">
+        <div class="label">BOUT #</div>
+        <div class="value" id="boutNum">101</div>
+        <div class="row">
+          <button class="btn small" data-action="boutDec">-</button>
+          <button class="btn small" data-action="boutInc">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row spaceBetween">
+      <div class="period">
+        <div class="label">PERIOD</div>
+        <div class="periodValue" id="periodValue">1</div>
+        <div class="row">
+          <button class="btn small" data-action="periodDec">-</button>
+          <button class="btn small" data-action="periodInc">+</button>
+        </div>
+      </div>
+
+      <button class="btn danger" data-action="resetScores">RESET SCORES</button>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="scoreboard">
+      <div class="side" id="leftSide">
+        <div class="sideHeader">
+          <div class="chip" id="activeLeft">ACTIVE</div>
+          <input id="leftName" class="name" value="Red" />
+        </div>
+        <div class="score" id="leftScore">0</div>
+        <div class="row">
+          <button class="btn big" data-action="leftDec">-</button>
+          <button class="btn big" data-action="leftInc">+</button>
+        </div>
+      </div>
+
+      <div class="side" id="rightSide">
+        <div class="sideHeader">
+          <div class="chip muted" id="activeRight">ACTIVE</div>
+          <input id="rightName" class="name" value="Green" />
+        </div>
+        <div class="score" id="rightScore">0</div>
+        <div class="row">
+          <button class="btn big" data-action="rightDec">-</button>
+          <button class="btn big" data-action="rightInc">+</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="controls">
+      <div class="row wrap">
+        <button class="btn toggle" id="toggleActive">Scoring: Red</button>
+        <button class="btn" data-action="undo">Undo</button>
+        <button class="btn" data-action="fullscreen">Fullscreen</button>
+      </div>
+
+      <div class="grid">
+        <button class="btn scoreBtn" data-points="3" data-label="T3">T3</button>
+        <button class="btn scoreBtn" data-points="1" data-label="E1">E1</button>
+        <button class="btn scoreBtn" data-points="2" data-label="R2">R2</button>
+        <button class="btn scoreBtn" data-points="2" data-label="NF2">NF2</button>
+        <button class="btn scoreBtn" data-points="3" data-label="NF3">NF3</button>
+        <button class="btn scoreBtn" data-points="4" data-label="NF4">NF4</button>
+        <button class="btn scoreBtn" data-points="1" data-label="P1">P1</button>
+        <button class="btn scoreBtn" data-points="2" data-label="P2">P2</button>
+      </div>
+
+      <h3>Event Log</h3>
+      <div class="log" id="log"></div>
+      <div class="row wrap">
+        <button class="btn" data-action="exportCsv">Export CSV</button>
+        <button class="btn" data-action="exportJson">Export JSON</button>
+        <button class="btn danger" data-action="clearLog">Clear Log</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
 
