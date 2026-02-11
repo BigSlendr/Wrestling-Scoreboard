@@ -31,9 +31,13 @@
       <div class="metaBlock">
         <div class="label">BOUT #</div>
         <div class="value" id="boutNum">101</div>
-        <div class="row">
-          <button class="btn small" data-action="boutDec">-</button>
-          <button class="btn small" data-action="boutInc">+</button>
+        <div class="row wrap center">
+          <button class="btn small stepBtn" data-action="boutDec100">-100</button>
+          <button class="btn small stepBtn" data-action="boutDec10">-10</button>
+          <button class="btn small stepBtn" data-action="boutDec1">-1</button>
+          <button class="btn small stepBtn" data-action="boutInc1">+1</button>
+          <button class="btn small stepBtn" data-action="boutInc10">+10</button>
+          <button class="btn small stepBtn" data-action="boutInc100">+100</button>
         </div>
       </div>
     </div>
@@ -97,6 +101,42 @@
         <button class="btn scoreBtn" data-points="2" data-label="P2">P2</button>
       </div>
 
+      <h3>Match Outcome</h3>
+      <div class="grid outcomesGrid">
+        <button class="btn outcomeBtn" data-outcome-label="WBD" data-outcome-title="Win By Decision">
+          <span class="outcomeCode">WBD</span>
+          <span class="outcomeTitle">Win By Decision</span>
+        </button>
+        <button class="btn outcomeBtn" data-outcome-label="WBMD" data-outcome-title="Win By Major Decision">
+          <span class="outcomeCode">WBMD</span>
+          <span class="outcomeTitle">Win By Major Decision</span>
+        </button>
+        <button class="btn outcomeBtn" data-outcome-label="WBTF" data-outcome-title="Win By Technical Fall">
+          <span class="outcomeCode">WBTF</span>
+          <span class="outcomeTitle">Win By Technical Fall</span>
+        </button>
+        <button class="btn outcomeBtn" data-outcome-label="WBF" data-outcome-title="Win By Fall">
+          <span class="outcomeCode">WBF</span>
+          <span class="outcomeTitle">Win By Fall</span>
+        </button>
+        <button class="btn outcomeBtn" data-outcome-label="WBDQ" data-outcome-title="Win By Disqualification">
+          <span class="outcomeCode">WBDQ</span>
+          <span class="outcomeTitle">Win By Disqualification</span>
+        </button>
+        <button class="btn outcomeBtn" data-outcome-label="WBID" data-outcome-title="Win By Injury Default">
+          <span class="outcomeCode">WBID</span>
+          <span class="outcomeTitle">Win By Injury Default</span>
+        </button>
+        <button class="btn outcomeBtn" data-outcome-label="WBFor" data-outcome-title="Win By Forfeit">
+          <span class="outcomeCode">WBFor</span>
+          <span class="outcomeTitle">Win By Forfeit</span>
+        </button>
+        <button class="btn outcomeBtn" data-outcome-label="WBMF" data-outcome-title="Win By Medical Forfeit">
+          <span class="outcomeCode">WBMF</span>
+          <span class="outcomeTitle">Win By Medical Forfeit</span>
+        </button>
+      </div>
+
       <h3>Event Log</h3>
       <div class="log" id="log"></div>
       <div class="row wrap">
@@ -110,4 +150,3 @@
   <script src="app.js"></script>
 </body>
 </html>
-

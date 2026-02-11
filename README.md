@@ -1,7 +1,7 @@
 # Wrestling Scoreboard (Static Web App)
 
 ## What this app does
-A static, offline-capable wrestling scoreboard inspired by the “Wrestling Scoreboard 2.0” PowerPoint macro version. It provides a large scoreboard view, operator controls, quick-score buttons, event logging with undo, and CSV/JSON exports for meet records.
+A static, offline-capable wrestling scoreboard inspired by the “Wrestling Scoreboard 2.0” PowerPoint macro version. It provides a large scoreboard view, operator controls, quick-score buttons, match outcome logging, undo, and CSV/JSON exports for meet records.
 
 ## Run locally
 - **Fastest:** open `index.html` directly in your browser.
@@ -35,6 +35,19 @@ A static, offline-capable wrestling scoreboard inspired by the “Wrestling Scor
 
 ## Meet usage notes
 - Use **Fullscreen** for projector/arena displays.
-- **Operator Controls** include undo, quick-score buttons, and export options.
-- **Exports** create downloadable CSV/JSON files for record keeping.
-- The app stores state locally so you can refresh without losing the bout data.
+- **Bout controls** support `-100`, `-10`, `-1`, `+1`, `+10`, and `+100` steps (never below 0).
+- **Scoring controls** and **Match Outcome** controls both log events against the active side.
+- **Outcome acronyms**:
+  - **WBD**: Win By Decision
+  - **WBMD**: Win By Major Decision
+  - **WBTF**: Win By Technical Fall
+  - **WBF**: Win By Fall
+  - **WBDQ**: Win By Disqualification
+  - **WBID**: Win By Injury Default
+  - **WBFor**: Win By Forfeit
+  - **WBMF**: Win By Medical Forfeit
+- **Event log format** is: `Bout Period Side: Action Time`.
+  - Scoring entries include points, e.g. `220 Period 2 Green: T3 (+3) 1:16pm`.
+  - Outcome entries omit a points suffix, e.g. `220 Period 3 Green: WBD 1:16pm`.
+- **Exports** include outcome events and preserve captured mat/bout/period values at event time.
+- The app stores state locally so you can refresh without losing bout data.
