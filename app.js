@@ -114,7 +114,8 @@ function renderLog() {
     .forEach((entry) => {
       const row = document.createElement("div");
       row.className = "logEntry";
-      row.textContent = `${entry.sideName}: ${entry.label} (${entry.delta >= 0 ? "+" : ""}${entry.delta}) ${entry.displayTime}`;
+      const deltaText = entry.type === "outcome" ? "" : ` (${entry.delta >= 0 ? "+" : ""}${entry.delta})`;
+      row.textContent = `${entry.bout} Period ${entry.period} ${entry.sideName}: ${entry.label}${deltaText} ${entry.displayTime}`;
       elements.log.appendChild(row);
     });
 }
@@ -149,18 +150,27 @@ function adjustScore(side, delta, label = "Manual") {
   saveState();
 }
 
-function addLog({ label, delta, side, sideName }) {
+function formatLogTime(date) {
+  return date
+    .toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true })
+    .replace(/\s/g, "")
+    .toLowerCase();
+}
+
+function addLog({ label, delta, side, sideName, type = "score", fullTitle = "" }) {
   const at = new Date();
   const entry = {
     at: at.toISOString(),
-    displayTime: at.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    displayTime: formatLogTime(at),
     mat: state.mat,
     bout: state.bout,
     period: periodOptions[state.periodIndex],
     side,
     sideName,
     label,
-    delta
+    delta,
+    type,
+    fullTitle
   };
   state.log.push(entry);
 }
@@ -192,7 +202,7 @@ function changeMat(delta) {
 
 function changeBout(delta) {
   pushUndoSnapshot();
-  state.bout = Math.max(1, state.bout + delta);
+  state.bout = Math.max(0, state.bout + delta);
   render();
   saveState();
 }
@@ -282,7 +292,7 @@ function undo() {
 }
 
 function exportCsv() {
-  const headers = ["at", "mat", "bout", "period", "side", "sideName", "label", "delta"];
+  const headers = ["at", "mat", "bout", "period", "side", "sideName", "label", "delta", "type", "fullTitle"];
   const rows = state.log.map((entry) => [
     entry.at,
     entry.mat,
@@ -291,7 +301,9 @@ function exportCsv() {
     entry.side,
     entry.sideName,
     entry.label,
-    entry.delta
+    entry.delta,
+    entry.type ?? "score",
+    entry.fullTitle ?? ""
   ]);
   const csv = [headers.join(","), ...rows.map((row) => row.map(escapeCsv).join(","))].join("\n");
   downloadFile("wrestling-log.csv", "text/csv", csv);
@@ -344,11 +356,23 @@ function handleAction(action) {
     case "matInc":
       changeMat(1);
       break;
-    case "boutDec":
+    case "boutDec100":
+      changeBout(-100);
+      break;
+    case "boutDec10":
+      changeBout(-10);
+      break;
+    case "boutDec1":
       changeBout(-1);
       break;
-    case "boutInc":
+    case "boutInc1":
       changeBout(1);
+      break;
+    case "boutInc10":
+      changeBout(10);
+      break;
+    case "boutInc100":
+      changeBout(100);
       break;
     case "periodDec":
       cyclePeriod(-1);
@@ -411,7 +435,19 @@ function handleQuickScore(button) {
   if (debounceAction(`quick-${label}`)) return;
   pushUndoSnapshot();
   state[`${side}Score`] = Math.max(0, state[`${side}Score`] + points);
-  addLog({ label, delta: points, side, sideName });
+  addLog({ label, delta: points, side, sideName, type: "score" });
+  render();
+  saveState();
+}
+
+function handleOutcome(button) {
+  const label = button.dataset.outcomeLabel;
+  const fullTitle = button.dataset.outcomeTitle || "";
+  const side = state.activeSide;
+  const sideName = side === "left" ? state.leftName : state.rightName;
+  if (debounceAction(`outcome-${label}`)) return;
+  pushUndoSnapshot();
+  addLog({ label, delta: 0, side, sideName, type: "outcome", fullTitle });
   render();
   saveState();
 }
@@ -472,8 +508,38 @@ function registerServiceWorker() {
   }
 }
 
+
+function normalizeLoadedLog() {
+  state.bout = Math.max(0, Number.parseInt(state.bout, 10) || 0);
+  state.mat = Math.max(1, Number.parseInt(state.mat, 10) || 1);
+  state.periodIndex = Math.min(periodOptions.length - 1, Math.max(0, Number.parseInt(state.periodIndex, 10) || 0));
+  state.leftScore = Math.max(0, Number.parseInt(state.leftScore, 10) || 0);
+  state.rightScore = Math.max(0, Number.parseInt(state.rightScore, 10) || 0);
+
+  state.log = (state.log || []).map((entry) => {
+    const entryDate = entry.at ? new Date(entry.at) : new Date();
+    const resolvedSide = entry.side || "left";
+    return {
+      at: entry.at || entryDate.toISOString(),
+      displayTime: entry.displayTime || formatLogTime(entryDate),
+      mat: Number.isFinite(entry.mat) ? entry.mat : state.mat,
+      bout: Number.isFinite(entry.bout) ? entry.bout : state.bout,
+      period: entry.period || periodOptions[state.periodIndex],
+      side: resolvedSide,
+      sideName:
+        entry.sideName ||
+        (resolvedSide === "left" ? state.leftName : state.rightName),
+      label: entry.label || "",
+      delta: Number.isFinite(entry.delta) ? entry.delta : 0,
+      type: entry.type === "outcome" ? "outcome" : "score",
+      fullTitle: entry.fullTitle || ""
+    };
+  });
+}
+
 function init() {
   loadState();
+  normalizeLoadedLog();
   render();
   if (state.timerRunning) {
     startTimerInterval();
@@ -488,6 +554,10 @@ function init() {
     }
     if (button.classList.contains("scoreBtn")) {
       handleQuickScore(button);
+      return;
+    }
+    if (button.classList.contains("outcomeBtn")) {
+      handleOutcome(button);
     }
   });
 
